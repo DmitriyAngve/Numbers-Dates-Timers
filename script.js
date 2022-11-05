@@ -265,5 +265,13 @@ console.log(Number(23)); // 23 number
 console.log(+'23'); // 23 number
 
 // Parsing (reconverted number from a string). Regex - регулярное выражение
-console.log(Number.parseInt('30px')); // 30
-console.log(Number.parseInt('e23')); // NaN
+console.log(Number.parseInt('30px', 10)); // 30
+console.log(Number.parseInt('e23', 10)); // NaN
+console.log(Number.parseInt('30px', 2)); // NaN
+
+// ParseFloat
+console.log(Number.parseFloat('  2.5rem   ')); // 2.5
+console.log(Number.parseInt('  2.5rem   ')); // 2
+
+// ParseFloat and ParseInt - global functions
+console.log(parseFloat('   2.5rem   ')); // 2.5 - Works without Number
