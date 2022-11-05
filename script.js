@@ -94,7 +94,7 @@ const displayMovements = function (movements, sort = false) {
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
 
@@ -104,19 +104,19 @@ const displayMovements = function (movements, sort = false) {
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance}€`;
+  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
 };
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes}€`;
+  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
 
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out)}€`;
+  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
 
   const interest = acc.movements
     .filter(mov => mov > 0)
@@ -126,7 +126,7 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
 
 const createUsernames = function (accs) {
@@ -206,7 +206,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = +inputLoanAmount.value;
+  const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
@@ -252,6 +252,10 @@ btnSort.addEventListener('click', function (e) {
 ///////////////////////////////LECTURES/////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////////
+/////////////////////CONVERTING AND CHECKING NUMBER/////////////////
+////////////////////////////////////////////////////////////////////
+/*
 // We have one data-type for all numbers
 console.log(23 === 23.0); // true
 // Numbers always stored in binary format
@@ -275,3 +279,216 @@ console.log(Number.parseInt('  2.5rem   ')); // 2
 
 // ParseFloat and ParseInt - global functions
 console.log(parseFloat('   2.5rem   ')); // 2.5 - Works without Number
+
+// isNaN - for checking if any value is a number. IsNaN not a perfect way for checking if a value is a number
+console.log(Number.isNaN(20)); // false (because its not a number, its regular value)
+console.log(Number.isNaN('20')); // false
+console.log(Number.isNaN(+'20X')); // true
+console.log(Number.isNaN(23 / 0)); // false
+
+// IsFinite - BETTER METHOD for checking!!!
+console.log(Number.isFinite(20)); // true
+console.log(Number.isFinite('20')); // false
+console.log(Number.isFinite(+'20X')); // false
+console.log(Number.isFinite(23 / 0)); // false
+
+// isInteger
+console.log(Number.isInteger(23)); // true
+console.log(Number.isInteger(23.0)); // true
+console.log(Number.isInteger(23 / 0)); // false
+*/
+
+////////////////////////////////////////////////////////////////////
+//////////////////////////MATH AND ROUNDING/////////////////////////
+////////////////////////////////////////////////////////////////////
+/*
+// Roots!
+console.log(Math.sqrt(25)); // 5
+console.log(25 ** 1 / 2); // 12,5 square root
+console.log(8 ** 1 / 3); // 2 cubic root
+
+// Math.max
+console.log(Math.max(5, 18, 23, 11, 2)); // 23
+console.log(Math.max(5, 18, '23', 11, 2)); // 23
+console.log(Math.max(5, 18, '23px', 11, 2)); // NaN (not work)
+
+// Math.min
+console.log(Math.min(5, 18, 23, 11, 2)); // 2
+
+// Math.PI
+console.log(Math.PI * Number.parseFloat('10px') ** 2); // How to calculate radius of circle // 314.1592653589793
+
+// Math.random
+console.log(Math.trunc(Math.random() * 6) + 1); // Random from 1 to 6
+
+// Function for random mix and max (with Math.floor - work with negative numbers)
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min) + 1) + min; // Math.random - between 0 and 1 -> 0...(max-min) -> min... max
+console.log(randomInt(10, 20));
+
+// Rounding integers
+console.log(Math.trunc(23.3)); // 23 Remove decimal parts always
+console.log(Math.round(23.9));
+
+console.log(Math.round(23.3)); // 23 Remove decimal parts always
+console.log(Math.round(23.9));
+
+console.log(Math.ceil(23.3)); // 24 Always round up
+console.log(Math.ceil(23.9)); // 24 Always round up
+
+console.log(Math.floor(23.3)); // 23 Always round down
+console.log(Math.floor('23.9')); // 23 Always round down
+
+console.log(Math.trunc(23.3));
+
+console.log(Math.trunc(-23.3)); // -23
+console.log(Math.floor(-23.3)); // -24 math.floor - better!
+
+// Rounding decimals
+console.log((2.7).toFixed(0)); // 3 - string!!!
+console.log((2.7).toFixed(3)); // 2,700 - string!!!
+console.log((2.345).toFixed(2)); // 2,35 - string!!!
+console.log(+(2.345).toFixed(2)); // 2,35 - string!!!
+
+// !!! Primitives don't have methods. JS behind the scenes will do boxing, and boxing transform this primitives to a number objects, then call the method on that object !!! -> and converting back to primitive
+*/
+
+////////////////////////////////////////////////////////////////////
+////////////////////////THE REMAINDER OPERATOR//////////////////////
+////////////////////////////////////////////////////////////////////
+/*
+// Remainder - остаток
+console.log(5 % 2); // 1
+console.log(5 / 2); // 2.5 (5 = 2 * 2 + 1) - 1 is remainder
+
+console.log(8 % 3); // 2
+console.log(8 / 3); // 8 = 2 * 3 + 2 - remainder
+
+console.log(6 % 2); // remainder 0
+console.log(6 / 2); // 6 = 2 * 3
+
+console.log(7 % 2); // 7 = 2 * 3 + 1 - remainder
+console.log(7 / 2); // 3.5
+
+const isEven = n => n % 2 === 0;
+console.log(isEven(8)); // true
+console.log(isEven(23)); // false
+console.log(isEven(514)); // true
+
+// Nth (каждый)
+labelBalance.addEventListener('click', function () {
+  [...document.querySelectorAll('.movements__row')].forEach(function (row, i) {
+    if (i % 2 === 0) row.style.backgroundColor = 'orangered';
+    if (i % 3 === 0) row.style.backgroundColor = 'green';
+  });
+});
+*/
+
+////////////////////////////////////////////////////////////////////
+////////////////////////NUMERIC SEPARATORS//////////////////////////
+////////////////////////////////////////////////////////////////////
+/*
+// 287,460,000,000
+const diameter = 287_460_000_000;
+console.log(diameter); // 287460000000
+
+const priceCents = 345_99;
+console.log(priceCents); // 34599
+
+// Fee - платеж
+const transferFee1 = 15_00;
+const transferFee2 = 1_500;
+
+const PI = 3.14_15;
+console.log(PI); // 3.1415
+
+const PI2 = 3._1415;
+console.log(PI2); // Error
+
+console.log(Number("230_000")); // NaN. JS will not be able to parse the number correctly out of that string
+*/
+
+////////////////////////////////////////////////////////////////////
+///////////////////////WORKING WITH BIGINT//////////////////////////
+////////////////////////////////////////////////////////////////////
+
+/*
+// 64 bits(of any number) = only 53 are used to actually store the digits themselves. The rest are for storing the position of decimal point and the sign
+// 53 bits for store the digits - that menas that there is a limit for how big number can be
+
+console.log(2 ** 53 - 1); // 9007199254740991 (biggest number in JS) (2 - only zeors and ones). Any integer that is large than this, is not safe
+console.log(Number.MAX_SAFE_INTEGER);
+console.log(2 ** 53 + 1); // 9007199254740992. If we do calculations bigger then 9007199254740991, then we might lose precision
+
+// All number bigger then 9007199254740991 - unsafe numbers!
+console.log(2 ** 53 + 1); // 9007199254740991
+console.log(2 ** 53 + 2); // 9007199254740994
+console.log(2 ** 53 + 3); // 9007199254740996
+console.log(2 ** 53 + 4); // 9007199254740996
+console.log(2 ** 53 + 5); // 9007199254740996
+
+// From IE2020 - BigInt (can be used to store numbers as large as we want)
+// Creating some big numbers
+console.log(48484848481901903903930930913019039019n); // With ...n - JS can accurately work with this number
+console.log(BigInt(484848484819));
+
+// Operations
+console.log(10000n + 10000n); // 20000n
+console.log(56585484515151548485638978626485138451654815215815n * 100000n);
+// console.log(Math.sqrt(16n)); // Cannot convert BigInt value to a number
+
+const huge = 2024944923234324232n;
+const num = 23;
+// console.log(huge * num); // TypeError: Cannot mix BigInt and other types, use explicit conversions
+console.log(huge * BigInt(num)); // works
+
+// Exceptions
+console.log(20n > 15); // true
+console.log(20n === 20); // false
+console.log(typeof 20n); // bigint
+console.log(20n == '20');
+console.log(huge + '  is REALLY big'); // 2024944923234324232  is REALLY big
+
+// Divisions
+console.log(10n / 3n); // 3n (cut all decimal part)
+console.log(10 / 3); // 3,3333333335
+*/
+
+////////////////////////////////////////////////////////////////////
+//////////////////////////CREATING DATES////////////////////////////
+////////////////////////////////////////////////////////////////////
+/*
+// Create a date
+const now = new Date();
+console.log(now); // Sat Nov 05 2022 12:10:40 GMT+0300 (Москва, стандартное время)
+
+console.log(new Date('Sat Nov 05 2022 12:10:40')); // Sat Nov 05 2022 12:10:40 GMT+0300 (Москва, стандартное время)
+console.log(new Date('December 24, 2015')); // Thu Dec 24 2015 00:00:00 GMT+0300 (Москва, стандартное время)
+
+console.log(new Date(account1.movementsDates[0])); // Tue Nov 19 2019 00:31:17 GMT+0300 (Москва, стандартное время)
+console.log(new Date(2037, 10, 19, 15, 23, 5)); // Thu Nov 19 2037 15:23:05 GMT+0300 (Москва, стандартное время)
+console.log(new Date(2037, 10, 31, 15, 23, 5)); // Tue Dec 01 2037 15:23:05 GMT+0300 (Москва, стандартное время) AUTOCORRECT (nov 31)
+
+console.log(new Date(0)); // Thu Jan 01 1970 03:00:00 GMT+0300 (Москва, стандартное время
+console.log(new Date(3 * 24 * 60 * 60 * 1000)); // converted to milliseconds (Sun Jan 04 1970 03:00:00 GMT+0300 (Москва, стандартное время)). Timestamp = 3 days (3 * 24 * 60 * 60 * 1000 = 259200000)
+*/
+
+// Working with dates
+const future = new Date(2037, 10, 19, 15, 23);
+console.log(future);
+console.log(future.getFullYear()); // 2037
+console.log(future.getMonth()); // 10
+console.log(future.getDate()); // 19
+console.log(future.getDay()); // 4 (day of the week)
+console.log(future.getHours()); // 15
+console.log(future.getMinutes()); // 23
+console.log(future.getSeconds()); // 0
+console.log(future.toISOString()); // 2037-11-19T12:23:00.000Z
+console.log(future.getTime()); // 2142246180000 (timestamp)
+
+console.log(new Date(2142246180000)); // Thu Nov 19 2037 15:23:00 GMT+0300 (Москва, стандартное время)
+
+console.log(Date.now()); // 1667640236039
+
+future.setFullYear(2040);
+console.log(future); // Mon Nov 19 2040 15:23:00 GMT+0300 (Москва, стандартное время)
