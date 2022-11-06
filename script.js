@@ -187,19 +187,44 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
 };
 
+// This function called immediately (not after 1000 millisec)
+const startLogOutTimer = function () {
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+    // In each call, print the remaining time to UI
+    labelTimer.textContent = `${min}:${sec}`;
+
+    // When 0 seconds, stop timer and log out user
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+    // Decrease one second
+    time--;
+  };
+
+  // Set time to 2 minutes
+  let time = 120;
+  // Call the timer every second
+  tick(); // Call it immediately
+  const timer = setInterval(tick, 1000);
+  return timer; // for clear the timer
+};
+
 ///////////////////////////////////////
 // Event handlers
-let currentAccount;
+let currentAccount, timer;
 
 // FAKE ALWAYS LOGGED IN
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 100;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
   e.preventDefault();
-
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value
   );
@@ -212,32 +237,36 @@ btnLogin.addEventListener('click', function (e) {
     }`;
     containerApp.style.opacity = 100;
 
+    // Create current date and time
+    const now = new Date();
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+      weekday: 'long',
+    };
+    labelDate.textContent = new Intl.DateTimeFormat(
+      currentAccount.locale, // TRY ACC.LOCALE
+      options
+    ).format(now);
     // // Clear input fields
-    // inputLoginUsername.value = inputLoginPin.value = '';
-    // inputLoginPin.blur();
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
+
+    // Timer
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
 
     // Update UI
     updateUI(currentAccount);
   }
 });
 
-// Create current date and time
-const now = new Date();
-const options = {
-  hour: 'numeric',
-  minute: 'numeric',
-  day: 'numeric',
-  month: 'numeric',
-  year: 'numeric',
-  weekday: 'long',
-};
-const locale = navigator.language;
+// const locale = navigator.language;
 // console.log(locale);
 
-labelDate.textContent = new Intl.DateTimeFormat(
-  currentAccount.locale, // TRY ACC.LOCALE
-  options
-).format(now);
 // console.log(currentAccount.locale);
 
 // const day = `${now.getDate()}`.padStart(2, 0);
@@ -271,6 +300,10 @@ btnTransfer.addEventListener('click', function (e) {
 
     // Update UI
     updateUI(currentAccount);
+
+    // Reset timer (after performing actions in the account)
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
@@ -290,6 +323,8 @@ btnLoan.addEventListener('click', function (e) {
 
       // Update UI
       updateUI(currentAccount);
+      clearInterval(timer);
+      timer = startLogOutTimer();
     }, 2500);
   }
   inputLoanAmount.value = '';
