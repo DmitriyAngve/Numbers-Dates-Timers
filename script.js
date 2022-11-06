@@ -589,7 +589,7 @@ console.log(days1); // 10 days "(1000 * 60 * 60 * 24) - avoid timestamp"
 */
 
 ////////////////////////////////////////////////////////////////////
-//////////////////INTERNATIONALIZING NUMBERS (INTL)///////////////////
+//////////////////INTERNATIONALIZING NUMBERS (INTL)/////////////////
 ////////////////////////////////////////////////////////////////////
 /*
 const num = 3884764.23;
@@ -608,4 +608,21 @@ console.log(
   'Browser: ',
   new Intl.NumberFormat(navigator.language, options2).format(num)
 ); // Browser:   3 884 764,23 ми/ч
+*/
+
+////////////////////////////////////////////////////////////////////
+///////////////////TIMERS: SETTIMEOUT AND SETINTERV/////////////////
+////////////////////////////////////////////////////////////////////
+/*
+const ingredients = ['olives', 'cheese'];
+
+const pizzaTimer = setTimeout(
+  (ing1, ing2) => console.log(`Here is your pizza with ${ing1} and ${ing2} 🍕`),
+  3000,
+  ...ingredients
+);
+// Really important is that the code execution does not stop here at this point, so when execution of our code reaches this point, it will simply call the set timeout function, it will then essentially register this callback function here to be called later. And then the code execution simply continues
+console.log('Waiting...'); // After setTimeout function register JS move into this console.log function
+
+if (ingredients.includes('cheese')) clearTimeout(pizzaTimer); // we don't see the execution
 */
