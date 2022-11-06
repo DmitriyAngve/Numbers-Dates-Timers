@@ -100,6 +100,13 @@ const formatMovementDate = function (date, locale) {
   }
 };
 
+const formatCur = function (value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
 
@@ -114,13 +121,15 @@ const displayMovements = function (acc, sort = false) {
     const dispayDate = formatMovementDate(date, acc.locale);
     // time string. We need to convert this strings back into a JS object because we can actually work with that data
 
+    const formattedMov = formatCur(mov, acc.locale, acc.currency);
+
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
         <div class="movements__date">${dispayDate}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+        <div class="movements__value">${formattedMov}</div>
       </div>
     `;
 
@@ -130,19 +139,20 @@ const displayMovements = function (acc, sort = false) {
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+
+  labelBalance.textContent = formatCur(acc.balance, acc.locale, acc.currency);
 };
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  labelSumIn.textContent = formatCur(incomes, acc.locale, acc.currency);
 
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
+  labelSumOut.textContent = formatCur(Math.abs(out), acc.locale, acc.currency);
 
   const interest = acc.movements
     .filter(mov => mov > 0)
@@ -152,7 +162,7 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = formatCur(interest, acc.locale, acc.currency);
 };
 
 const createUsernames = function (accs) {
@@ -182,9 +192,9 @@ const updateUI = function (acc) {
 let currentAccount;
 
 // FAKE ALWAYS LOGGED IN
-// currentAccount = account1;
-// updateUI(currentAccount);
-// containerApp.style.opacity = 100;
+currentAccount = account1;
+updateUI(currentAccount);
+containerApp.style.opacity = 100;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -221,11 +231,11 @@ const options = {
   year: 'numeric',
   weekday: 'long',
 };
-// const locale = navigator.language;
+const locale = navigator.language;
 // console.log(locale);
 
 labelDate.textContent = new Intl.DateTimeFormat(
-  currentAccount.locale,
+  currentAccount.locale, // TRY ACC.LOCALE
   options
 ).format(now);
 // console.log(currentAccount.locale);
@@ -579,5 +589,23 @@ console.log(days1); // 10 days "(1000 * 60 * 60 * 24) - avoid timestamp"
 */
 
 ////////////////////////////////////////////////////////////////////
-//////////////////INTERNATIONALIZING DATES (INTL)///////////////////
+//////////////////INTERNATIONALIZING NUMBERS (INTL)///////////////////
 ////////////////////////////////////////////////////////////////////
+/*
+const num = 3884764.23;
+
+const options2 = {
+  style: 'currency', // unit, percent or currency
+  unit: 'celsius', // mile-per-hour
+  currency: 'EUR',
+  // useGrouping: false,
+};
+
+console.log('US: ', new Intl.NumberFormat('en-US', options2).format(num)); // US:  US:  3,884,764.23 mph
+console.log('Germany: ', new Intl.NumberFormat('de-DE', options2).format(num)); // Germany:  3.884.764,23 mi/h
+console.log('Syria: ', new Intl.NumberFormat('ar-SY', options2).format(num)); // Syria:   ٣٬٨٨٤٬٧٦٤٫٢٣
+console.log(
+  'Browser: ',
+  new Intl.NumberFormat(navigator.language, options2).format(num)
+); // Browser:   3 884 764,23 ми/ч
+*/
