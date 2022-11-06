@@ -280,14 +280,17 @@ btnLoan.addEventListener('click', function (e) {
   const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
-    currentAccount.movements.push(amount);
+    // Give bank time for approve (add some realistic)
+    setTimeout(function () {
+      // Add movement
+      currentAccount.movements.push(amount);
 
-    // Add loan date
-    currentAccount.movementsDates.push(new Date().toISOString());
+      // Add loan date
+      currentAccount.movementsDates.push(new Date().toISOString());
 
-    // Update UI
-    updateUI(currentAccount);
+      // Update UI
+      updateUI(currentAccount);
+    }, 2500);
   }
   inputLoanAmount.value = '';
 });
@@ -614,8 +617,8 @@ console.log(
 ///////////////////TIMERS: SETTIMEOUT AND SETINTERV/////////////////
 ////////////////////////////////////////////////////////////////////
 /*
+// SetTimeout
 const ingredients = ['olives', 'cheese'];
-
 const pizzaTimer = setTimeout(
   (ing1, ing2) => console.log(`Here is your pizza with ${ing1} and ${ing2} 🍕`),
   3000,
@@ -625,4 +628,17 @@ const pizzaTimer = setTimeout(
 console.log('Waiting...'); // After setTimeout function register JS move into this console.log function
 
 if (ingredients.includes('cheese')) clearTimeout(pizzaTimer); // we don't see the execution
+
+// SetInterval
+// Timer
+setInterval(function () {
+  const now = new Date();
+  const options3 = {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
+  const locale = navigator.language;
+  console.log(new Intl.DateTimeFormat(locale, options3).format(now));
+}, 1000); // Creating a new Date every 3 second
 */
